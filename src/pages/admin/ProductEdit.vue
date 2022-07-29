@@ -14,11 +14,11 @@
 
 <script>
 
-import {ref} from 'vue';
-import { useRouter } from 'vue-router';
+import {ref, onMounted} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 export default{
-    name: "ProductCreate",
+    name: "ProductEdit",
 
     setup(){
         const title = ref('');
@@ -26,9 +26,20 @@ export default{
 
         const router = useRouter();
 
+        const route = useRoute();
+
+        onMounted(async () => {
+            const response = await fetch(`http://localhost:8000/api/products/${route.params.id}`);
+
+            const product = await response.json();
+
+            title.value = product.title;
+            image.value = product.image;
+        });
+
         const submit = async () => {
-            await fetch('http://localhost:8000/api/products',{
-                method: 'POST',
+            await fetch(`http://localhost:8000/api/products/${route.params.id}`,{
+                method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     title: title.value,

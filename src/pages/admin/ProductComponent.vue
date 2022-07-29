@@ -24,7 +24,8 @@
                         <td>{{ product.likes }}</td>
                         <td>
                             <div class="btn-group mr-2">
-                                <a href="#" class="btn btn-sm btn-outlin" @click="del(product.id)">Delete</a>
+                                <router-link :to="`/admin/products/${product.id}/edit`" class="btn btn-sm btn-outline-secondary">Edit</router-link>
+                                <a href="#" class="btn btn-sm btn-outline-secondary" @click="del(product.id)">Delete</a>
                             </div>
                         </td>
                     </tr>
@@ -49,7 +50,7 @@
 
             const del = async (id: number) => {
                 if(confirm('Are you sure you want delete this product?')){
-                    await fetch('http://localhost:8000/api/products/${id}', {
+                    await fetch(`http://localhost:8000/api/products/${id}`, {
                         method: 'DELETE'
                     });
 
