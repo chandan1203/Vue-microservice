@@ -12,7 +12,7 @@
               <p class="card-text">{{ product.title }}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <button class="btn btn-sm btn-outline-secondary">like</button>
+                  <button class="btn btn-sm btn-outline-secondary" @click="like(product.id)">like</button>
                 </div>
                 <small class="text-muted">{{ product.likes}} likes</small>
               </div>
@@ -26,22 +26,42 @@
 </main>
    
 </template>
-<script>
+<script lang="ts">
 
+import { Product } from '@/interfaces/product';
 import {ref, onMounted} from 'vue';
 
 export default{
     name: "MainComponent",
     setup(){
-      const products = ref([]);
+      const products = ref([] as Product[]);
+      
       onMounted(async () =>  {
         const response = await fetch('http://localhost:8001/api/products');
 
-        products.value = response.json();
+        products.value = await response.json();
       });
 
+      const like =async (id: number) => {
+        const response = await fetch(`http://localhost:8001/api/products/${id}/like`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        products.value = products.value.map(
+          (p: Product) => {
+            if(p.id === id){
+              p.likes++;
+            }
+            return p;
+          }
+
+        )
+      }
+
       return{
-        products
+        products,
+        like
       }
     }
 }
